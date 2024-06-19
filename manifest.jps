@@ -1,0 +1,53 @@
+type: install
+id: n8n-docker-engine
+version: 1.0
+name: n8n.io
+homepage: https://docs.n8n.io/hosting/
+baseUrl: https://raw.githubusercontent.com/jeversonmiotti/n8n-virtuozzo-paas/main
+logo: https://raw.githubusercontent.com/jeversonmiotti/n8n-virtuozzo-paas/main/images/logo-n8n.png
+description: {
+  pt: "O n8n.io é uma ferramenta de automação de fluxos de trabalho de código aberto que permite automatizar tarefas repetitivas conectando diferentes aplicativos e serviços sem a necessidade de codificação. Com suporte a mais de 200 integrações e uma interface visual para criar fluxos de trabalho personalizados, é uma solução poderosa tanto para desenvolvedores quanto para não desenvolvedores otimizarem seus processos.",
+  en: "n8n.io is an open-source workflow automation tool that enables you to automate repetitive tasks by connecting different applications and services without coding. It supports over 200 integrations and provides a visual interface for building custom workflows, making it a powerful solution for both developers and non-developers to streamline their processes. ",
+  es: "n8n.io es una herramienta de automatización de flujos de trabajo de código abierto que permite automatizar tareas repetitivas conectando diferentes aplicaciones y servicios sin necesidad de programación. Con soporte para más de 200 integraciones y una interfaz visual para crear flujos de trabajo personalizados, es una solución poderosa tanto para desarrolladores como para no desarrolladores para optimizar sus procesos."
+}
+
+categories:
+  - apps/automation
+  - apps/popular
+
+globals:
+  db_postgres_password: ${fn.password}
+  encryption_key: n8n${fn.password}
+  n8n_user: ${fn.password(3)}
+  n8n_password: ${fn.password(10)}
+
+ssl: true
+
+nodes:
+- nodeType: nginx
+  displayName: Load Balancer
+  cloudlets: 16
+  nodeGroup: bl
+
+- nodeType: dockerengine
+  displayName: N8n
+  cloudlets: 16
+  nodeGroup: cp
+  startServiceOnCreation: true
+
+onInstall:
+  - cmd[cp]: |-
+      mkdir /home/n8n
+      cd /home/n8n
+      curl -L -o docker-compose.yaml https://raw.githubusercontent.com/weppa-cloud/jps/n8n/n8n-docker-engine/docker-compose.yaml
+      CONF_FILE="/home/n8n/docker-compose.yaml"
+      sed -i -r "s|([[:space:]]*- WEBHOOK_URL=).*|\1${env.url}|" "$CONF_FILE"
+      sed -i -r "s/([[:space:]]*- DB_POSTGRESDB_PASSWORD=).*/\1${globals.db_postgres_password}/g" "$CONF_FILE"
+      sed -i -r "s/([[:space:]]*- N8N_ENCRYPTION_KEY=).*/\1${globals.encryption_key}/g" "$CONF_FILE"
+      sed -i -r "s/([[:space:]]*- POSTGRES_PASSWORD=).*/\1${globals.db_postgres_password}/g" "$CONF_FILE"
+      sed -i -r "s/([[:space:]]*- N8N_BASIC_AUTH_PASSWORD=).*/\1${globals.n8n_password}/g" "$CONF_FILE"
+      docker compose up -d
+    user: root
+
+success: |-
+  Instalación Éxitosa
