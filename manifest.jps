@@ -26,13 +26,17 @@ ssl: true
 nodes:
 - nodeType: nginx
   displayName: Load Balancer
-  cloudlets: 16
+  fixedCloudlets: 1
+  cloudlets: 2
   nodeGroup: bl
+  skipEmail: true
 
 - nodeType: dockerengine
-  displayName: N8n
+  displayName: n8n.io
+  fixedCloudlets: 1
   cloudlets: 16
   nodeGroup: cp
+  skipEmail: true
   startServiceOnCreation: true
 
 onInstall:
@@ -49,5 +53,7 @@ onInstall:
       docker compose up -d
     user: root
 
-success: |-
-  Instalación Éxitosa
+
+success:
+  text: { en: text/success-text-en.md, pt: text/success-text-pt.md, es: text/success-text-es.md }
+  email: { en: text/success-email-en.md, pt: text/success-email-pt.md, es: text/success-email-es.md }
