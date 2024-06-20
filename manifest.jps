@@ -12,8 +12,8 @@ description: {
 }
 
 categories:
-  - apps/automation
-  - apps/popular
+ - apps/dev-and-admin-tools
+ - apps/popular
 
 globals:
   db_postgres_password: ${fn.password}
@@ -30,11 +30,13 @@ nodes:
   cloudlets: 2
   nodeGroup: bl
   skipEmail: true
+  diskLimit: 50
 
 - nodeType: dockerengine
   displayName: n8n.io
   fixedCloudlets: 1
   cloudlets: 16
+  diskLimit: 50
   nodeGroup: cp
   skipEmail: true
   startServiceOnCreation: true
