@@ -21,6 +21,7 @@ globals:
   n8n_user: ${fn.password(3)}
   n8n_password: ${fn.password(10)}
 
+skipEmail: true
 ssl: true
 
 nodes:
@@ -29,8 +30,8 @@ nodes:
   fixedCloudlets: 1
   cloudlets: 2
   nodeGroup: bl
-  skipEmail: true
   diskLimit: 50
+  skipNodeEmails: true
   log: Creating nginx
 
 - nodeType: dockerengine
@@ -38,10 +39,13 @@ nodes:
   fixedCloudlets: 1
   cloudlets: 16
   diskLimit: 50
-  nodeGroup: cp
-  skipEmail: true
+  nodeGroup: cp  
+  skipNodeEmails: true
   startServiceOnCreation: true
   log: Creating docker engine
+
+- restartNode:
+  nodeType: dockerengine  
 
 onInstall:
   - cmd[cp]: |-
