@@ -3,7 +3,7 @@ id: n8n-docker-engine
 version: 1.0
 name: n8n.io
 homepage: https://docs.n8n.io/hosting/
-baseUrl: https://raw.githubusercontent.com/jeversonmiotti/n8n-virtuozzo-paas/main
+baseUrl: https://raw.githubusercontent.com/jeversonmiotti/n8n-virtuozzo-paas/main/
 logo: https://raw.githubusercontent.com/jeversonmiotti/n8n-virtuozzo-paas/main/images/logo-n8n.png
 description: {
   pt: "O n8n.io é uma ferramenta de automação de fluxos de trabalho de código aberto que permite automatizar tarefas repetitivas conectando diferentes aplicativos e serviços sem a necessidade de codificação. Com suporte a mais de 200 integrações e uma interface visual para criar fluxos de trabalho personalizados, é uma solução poderosa tanto para desenvolvedores quanto para não desenvolvedores otimizarem seus processos.",
@@ -31,6 +31,7 @@ nodes:
   nodeGroup: bl
   skipEmail: true
   diskLimit: 50
+  log: Creating nginx
 
 - nodeType: dockerengine
   displayName: n8n.io
@@ -40,6 +41,7 @@ nodes:
   nodeGroup: cp
   skipEmail: true
   startServiceOnCreation: true
+  log: Creating docker engine
 
 onInstall:
   - cmd[cp]: |-
@@ -54,8 +56,10 @@ onInstall:
       sed -i -r "s/([[:space:]]*- N8N_BASIC_AUTH_PASSWORD=).*/\1${globals.n8n_password}/g" "$CONF_FILE"
       docker compose up -d
     user: root
+    log: Creating docker compose
 
 
 success:
   text: { en: text/success-text-en.md, pt: text/success-text-pt.md, es: text/success-text-es.md }
   email: { en: text/success-email-en.md, pt: text/success-email-pt.md, es: text/success-email-es.md }
+  log:  Sending success email and finishing installation
